@@ -1,5 +1,3 @@
-[TOC]
-
 # Scout Simulation Operation Process
 
 ## 1.	Introduction of Function Package
@@ -38,20 +36,20 @@ lms1xx_description
 
 ### Launch Gazebo
 ```
-rosrun scout_gazebo scout_playpen.launch
+roslaunch scout_gazebo scout_playpen.launch
 ```
 
 ### Launch Rviz
 ```
-rosrun scout_viz view_robot.launch
+roslaunch scout_viz view_robot.launch
 ```
 
 ### Launch Navigation
 ```
-rosrun scout_navigation amcl_demo.launch
+roslaunch scout_navigation amcl_demo.launch
 ```
  
 ## Original Code
-The original code is from official github of scout-v2 [Clikc](https://github.com/agilexrobotics/ugv_gazebo_sim). 
+The original code is from official github of scout-v2 [Click](https://github.com/agilexrobotics/ugv_gazebo_sim). 
 
 
