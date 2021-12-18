@@ -51,5 +51,7 @@ rosrun scout_viz view_robot.launch
 rosrun scout_navigation amcl_demo.launch
 ```
  
+## Original Code
+The original code is from official github of scout-v2 [Clikc](https://github.com/agilexrobotics/ugv_gazebo_sim). 
 
 
