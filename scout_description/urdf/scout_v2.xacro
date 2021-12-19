@@ -10,7 +10,7 @@
     <xacro:include filename="$(find scout_description)/urdf/scout_wheel_type1.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/scout_wheel_type2.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/accessories/vlp16_mount.urdf.xacro" />
-    <xacro:include filename="$(find husky_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro"/>
+    <xacro:include filename="$(find scout_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro"/>
 
     <!-- Variables -->
     <xacro:property name="M_PI" value="3.14159"/>
