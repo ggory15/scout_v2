@@ -1,5 +1,10 @@
 # Scout Simulation Operation Process
 
+## 0. clone git repository
+```
+git clone --recursive git@github.com:ggory15/scout_v2.git
+```
+
 ## 1.	Introduction of Function Package
 
 ```
@@ -31,6 +36,7 @@
 ### Dependency
 velodyne_description
 lms1xx_description 
+hector_gazebo_plugins
 
 ## 3.	About Usage
 
