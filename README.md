@@ -2,7 +2,7 @@
 
 ## 0. clone git repository & add gazebo_model_path
 ```
-git clone --recursive git@github.com:ggory15/scout_v2.git -b noetic-devel
+git clone --recursive git@github.com:ggory15/scout_v2.git 
 
 cd scout_v2/scout_gazebo/worlds/gazebo_map_for_khnp
 echo "export GAZEBO_MODEL_PATH=:$GAZEBO_MODEL_PATH:$(pwd)/refracted_corridor_map:$(pwd)/rough_terrain_map:$(pwd)/stair_map:$(pwd)/qr_codes:$(pwd)/manipulator_map:$(pwd)/disturbance_map:$(pwd)/common" >> ~/.bashrc
