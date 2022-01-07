@@ -1,28 +1,24 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
+
 project(scout_gazebo)
 
-find_package(catkin REQUIRED COMPONENTS)
-
-catkin_package()
-
-
-install(
-  DIRECTORY worlds
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
-install(
-  FILES launch/scout_empty_world.launch
-        launch/scout_playpen.launch
-        launch/playpen.launch
-        launch/spawn_scout.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-if (CATKIN_ENABLE_TESTING)
-  find_package(roslaunch REQUIRED)
-  roslaunch_add_file_check(launch/scout_empty_world.launch)
-  roslaunch_add_file_check(launch/scout_playpen.launch)
-  roslaunch_add_file_check(launch/playpen.launch)
-  roslaunch_add_file_check(launch/spawn_scout.launch)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(urdf REQUIRED)
+find_package(xacro REQUIRED)
+
+install(
+  DIRECTORY
+    launch worlds
+  DESTINATION
+    share/${PROJECT_NAME}
+)
+
+ament_package()

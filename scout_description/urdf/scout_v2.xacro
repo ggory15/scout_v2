@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 
-<robot name="scout_v2" 
-    xmlns:xacro="http://ros.org/wiki/xacro">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="scout">
 
-    <xacro:arg name="robot_namespace" default="/" />
-    <xacro:arg name="urdf_extras" default="empty.urdf" />
-    <xacro:arg name="velodyne_enable" default="true" />
+    <xacro:arg name="robot_namespace" default="/" /> 
+    <xacro:arg name="is_sim" default="true" />
+    <xacro:arg name="laser_enabled" default="true" />
 
     <xacro:include filename="$(find scout_description)/urdf/scout_wheel_type1.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/scout_wheel_type2.xacro" />
-    <xacro:include filename="$(find scout_description)/urdf/accessories/vlp16_mount.urdf.xacro" />
-    <xacro:include filename="$(find scout_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro"/>
+    <xacro:include filename="$(find scout_description)/urdf/scout_wheel_type3.xacro" />
+    
 
     <!-- Variables -->
     <xacro:property name="M_PI" value="3.14159"/>
@@ -32,7 +31,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://scout_description/meshes/base_link.dae" />
+                <mesh filename="file://$(find scout_description)/meshes/base_link.dae" />
             </geometry>
         </visual>
         <collision>
@@ -49,12 +48,17 @@
         </collision>
     </link>
 
+    <link name="base_footprint"/>
+
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${wheel_vertical_offset - wheel_radius}" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="base_footprint" />
+    </joint>
+
     <link name="inertial_link">
         <inertial>
-            <mass value="200" />
-            <!-- <mass value="50" /> -->
-            <!-- <origin xyz="-0.00065 -0.085 0.062" />
-            <inertia ixx="0.6022" ixy="-0.02364" ixz="-0.1197" iyy="1.7386" iyz="-0.001544" izz="2.0296" /> -->
+            <mass value="40" />
             <origin xyz="0.0 0.0 0.0" />
             <inertia ixx="2.288641" ixy="0" ixz="0" iyy="5.103976" iyz="0" izz="3.431465" />
         </inertial>
@@ -66,50 +70,89 @@
         <child link="inertial_link" />
     </joint>
 
-    <!-- For testing, hang the robot up in the air -->
-    <!-- <link name="world" />
-    <joint name="world_to_base_link=" type="fixed">
-        <origin xyz="0 0 0.5" rpy="0 0 0" />
-        <parent link="world"/>
-        <child link="base_link"/>
-    </joint> -->
+    <xacro:unless value="$(arg is_sim)">
+        <xacro:scout_wheel_type1 wheel_prefix="front_right">
+            <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="3.14 0 0" />
+        </xacro:scout_wheel_type1>
+        <xacro:scout_wheel_type2 wheel_prefix="front_left">
+            <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        </xacro:scout_wheel_type2>
+        <xacro:scout_wheel_type1 wheel_prefix="rear_left">
+            <origin xyz="${-wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        </xacro:scout_wheel_type1>
+        <xacro:scout_wheel_type2 wheel_prefix="rear_right">
+            <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="3.14 0 0" />
+        </xacro:scout_wheel_type2>
+    </xacro:unless>
+    <xacro:if value="$(arg is_sim)">
+        <xacro:scout_wheel_type3 wheel_prefix="front_right">
+            <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        </xacro:scout_wheel_type3>
+        <xacro:scout_wheel_type3 wheel_prefix="front_left">
+            <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        </xacro:scout_wheel_type3>
+        <xacro:scout_wheel_type3 wheel_prefix="rear_left">
+            <origin xyz="${-wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        </xacro:scout_wheel_type3>
+        <xacro:scout_wheel_type3 wheel_prefix="rear_right">
+            <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        </xacro:scout_wheel_type3>
+    </xacro:if>
 
-    <!-- Scout wheel macros -->
-    <!-- wheel labeled from 0 to 3, conter-clockwise, starting from front right wheel -->
-    <!-- motor 1 and 2 (left side) are mechanically installed in a reversed direction -->
-    <xacro:scout_wheel_type1 wheel_prefix="front_right">
-        <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
-    </xacro:scout_wheel_type1>
-    <xacro:scout_wheel_type1 wheel_prefix="front_left">
-        <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
-    </xacro:scout_wheel_type1>
-    <xacro:scout_wheel_type1 wheel_prefix="rear_left">
-        <origin xyz="${-wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
-    </xacro:scout_wheel_type1>
-    <xacro:scout_wheel_type1 wheel_prefix="rear_right">
-        <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
-    </xacro:scout_wheel_type1>
+    <xacro:if value="$(arg laser_enabled)">
+      <link name="base_laser_mount">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 ${-M_PI/2}" />
+          <geometry>
+            <mesh filename="file://$(find scout_description)/meshes/lms1xx_mount.dae" />
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 .0585" rpy="0 0 0" />
+          <geometry>
+            <box size=".1 .108 .117" />
+          </geometry>
+        </collision>
+      </link>
 
-
-
-    <!-- Additional definitions -->
-    <xacro:include filename="$(arg urdf_extras)" />
-
-    <!-- Gazebo definitions  -->
-    <xacro:include filename="$(find scout_description)/urdf/scout_v2.gazebo" />
-
-    <!-- Velodyne -->
-    <xacro:if value="$(arg velodyne_enable)">
-        <xacro:sick_lms1xx_mount prefix="base"/>
-        <xacro:sick_lms1xx frame="base_laser" topic="scan" robot_namespace="$(arg robot_namespace)"/>
-        <joint name="laser_mount_joint" type="fixed">
-        <origin xyz="-0.2 0 0.4" rpy="0 0 0" />
+      <joint name="laser_mount_joint" type="fixed">
+        <origin xyz="0.2 0 0.4" rpy="0 0 0" />
         <parent link="base_link" />
         <child link="base_laser_mount" />
-        </joint>
-        <!-- <xacro:vlp16_mount prefix="" parent_link="base_link" topic="points">
-        <origin xyz="-0.2 0 0.4" rpy="0 0 0" />
-        </xacro:vlp16_mount> -->
+      </joint>
+      
+      <link name="base_laser">
+        <inertial>
+          <mass value="1.1" />
+          <origin xyz="0 0 0" />
+          <inertia ixx="${0.0833333 * 1.1 * (0.102*0.102 + 0.152*0.152)}" ixy="0.0" ixz="0.0"
+            iyy="${0.0833333 * 1.1 * (0.105*0.105 + 0.152*0.152)}" iyz="0.0"
+            izz="${0.0833333 * 1.1 * (0.105*0.105 + 0.102*0.102)}" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="file://$(find scout_description)/meshes/sick-lms1xx.dae" />
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 -0.05" rpy="0 0 0" />
+          <geometry>
+            <box size="0.105 0.1 0.1" />
+          </geometry>
+        </collision>
+      </link>
+
+      <joint name="laser_joint" type="fixed">
+        <origin xyz="0.0352 0 0.0566" rpy="${M_PI} 0 0" />
+        <parent link="base_laser_mount" />
+        <child link="base_laser" />
+      </joint>
+    </xacro:if>
+
+    <xacro:if value="$(arg is_sim)">
+        <xacro:include filename="$(find scout_description)/urdf/scout_gazebo.xacro" />    
+        <xacro:gazebo_h2 prefix=""/> 
     </xacro:if>
 
 </robot>

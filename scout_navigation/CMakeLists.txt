@@ -1,14 +1,11 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(scout_navigation)
 
-find_package(catkin REQUIRED roslaunch)
-
-catkin_package()
-
-roslaunch_add_file_check(launch)
+find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config launch maps
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DIRECTORY launch config maps rviz slam_params
+  DESTINATION share/${PROJECT_NAME}
 )
 
+ament_package()
