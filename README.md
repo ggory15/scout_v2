@@ -40,7 +40,7 @@ This repository contains packages to control the scout robot on both real and si
     $ colcon build
     ```
 
-2. [Hardware-Launch] 
+3. [Hardware-Launch] 
  
 * Start the base node for the Scout robot
 
@@ -54,7 +54,7 @@ This repository contains packages to control the scout robot on both real and si
     $ ros2 run teleop_twist_keyboard teleop_twist_keyboard
     ```
 
-3. [Simulation-Launch]
+4. [Simulation-Launch]
  
 * Start the gazebo node for the Scout robot
 
@@ -68,7 +68,7 @@ This repository contains packages to control the scout robot on both real and si
     $ ros2 run teleop_twist_keyboard teleop_twist_keyboard
     ```
 
-4. [MapBuilding-Launch]
+5. [MapBuilding-Launch]
  
 * Start the gazebo node for the Scout robot
 
@@ -84,7 +84,7 @@ This repository contains packages to control the scout robot on both real and si
 
 * With Nav2 goal or manual control from keyboardtele-op node, you can get the current map. Then, The map can be saved with 'Save Map' and 'Serialize Map' buttons on SlamToolbox Plugin in Rviz2. The saved map is located at $HOME folder.
 
-5. [Localization-Launch]
+6. [Localization-Launch]
  
 * Start the gazebo node for the Scout robot
 
