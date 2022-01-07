@@ -1,64 +1,107 @@
-# Scout Simulation Operation Process
+# ROS2 Packages for Scout Mobile Robot For Galactic
 
-## 0. clone git repository & add gazebo_model_path
-```
-git clone --recursive git@github.com:ggory15/scout_v2.git 
+## Before start
 
-cd scout_v2/scout_gazebo/worlds/gazebo_map_for_khnp
-echo "export GAZEBO_MODEL_PATH=:$GAZEBO_MODEL_PATH:$(pwd)/refracted_corridor_map:$(pwd)/rough_terrain_map:$(pwd)/stair_map:$(pwd)/qr_codes:$(pwd)/manipulator_map:$(pwd)/disturbance_map:$(pwd)/common" >> ~/.bashrc
-```
+* This repository is based on an official repository of [scout-ros2](https://github.com/agilexrobotics/scout_ros2). But, out team have written much more pkgs including simulation with gazebo and mapping and localization with nav2 package.
+* This repository is optimized on ROS2-Galactic. (This repository can be built on ROS2-Foxy environment, but you should modify some variables in config and params to use scout navigation pkg.)
 
-## 1.	Introduction of Function Package
+## Packages
 
-```
-├── scout_control
-├── scout_description
-├── scout_gazebo
-├── scout_navigation
-└── scout_viz
-```
+This repository contains packages to control the scout robot on both real and simulation world. 
 
-​	scout_gazebo：The folder is gazebo simulation function package
+* scout_base: a ROS wrapper around [ugv_sdk](https://github.com/westonrobot/ugv_sdk) to monitor and control the scout robot.
+* scout_description: URDF model for the mobile base for scout_base and scout_gazebo pkgs.
+* scout_msgs: scout related message definitions.
+* scout_gazebo: a Gazebo launcher with scout v2 model. An IMU and 2d Lidar are attached on top_plate of the robot.
+* scout_navigation: a navigation launcher with nav2 pkg. To building a map, the launch scripts is written with slam_toolbox. For localization, we used amcl or slam_toolbox. 
 
-​	scout_control: The folder is simulation controller function package
-                : This package contains 1) Scout_Velcity Controller
-                                        2) Teleop for Joystick of Keyboard 
+## Supported Hardware
 
-​	scout_description: The folder is the function package of model file
+* Scout V2
 
-​	scout_navigation: The folder is the function package of amcl, gmapping, and move_base
+## Basic usage of the ROS packages
+1. [ROS-Installaion]
 
-​	scoutviz: The folder is the function package for rviz
+    See this page [click](https://docs.ros.org/en/galactic/Installation.html)
 
-## 2.	Environment
+2. [Build] 
 
-### Development Environment
+    (the following instructions assume your catkin workspace is at: ~/gal_ws/src)
 
-​	ubuntu 20.04 + [ROS Noetic desktop full](http://wiki.ros.org/noetic/Installation/Ubuntu)
+    ```
+    $ sudo apt-get install build-essential git cmake libasio-dev ros-galactic-nav2* ros-galactic-xacro ros-galactic-slam-toolbox ros-galactic-libg2o ros-galactic-joint-*
+    $ mkdir -p ~/gal_ws/src
+    $ cd ~/gal_ws/src
+    $ git clone https://github.com/westonrobot/ugv_sdk.git --recursive
+    $ git clone https://github.com/ggory15/scout_v2.git -b galactic-devel --recursive
+    $ git clone https://github.com/rst-tu-dortmund/teb_local_planner -b ros2-master --recursive
+    $ git clone https://github.com/rst-tu-dortmund/costmap_converter -b ros2 --recursive
+    $ cd ..
+    $ colcon build
+    ```
 
-### Dependency
-velodyne_description
-lms1xx_description 
-hector_gazebo_plugins
-
-## 3.	About Usage
-
-### Launch Gazebo
-```
-roslaunch scout_gazebo scout_playpen.launch
-```
-
-### Launch Rviz
-```
-roslaunch scout_viz view_robot.launch
-```
-
-### Launch Navigation
-```
-roslaunch scout_navigation amcl_demo.launch
-```
+2. [Hardware-Launch] 
  
-## Original Code
-The original code is from official github of scout-v2 [Click](https://github.com/agilexrobotics/ugv_gazebo_sim). 
+* Start the base node for the Scout robot
+
+    ```
+    $ ros2 launch scout_base scout_base.launch.py
+    ```
+
+* Start the keyboard tele-op node
+
+    ```
+    $ ros2 run teleop_twist_keyboard teleop_twist_keyboard
+    ```
+
+3. [Simulation-Launch]
+ 
+* Start the gazebo node for the Scout robot
+
+    ```
+    $ ros2 launch scout_gazebo gazebo_launch.py
+    ```
+
+* Start the keyboard tele-op node (For Manual Control)
+
+    ```
+    $ ros2 run teleop_twist_keyboard teleop_twist_keyboard
+    ```
+
+4. [MapBuilding-Launch]
+ 
+* Start the gazebo node for the Scout robot
+
+    ```
+    $ ros2 launch scout_gazebo gazebo_launch.py
+    ```
+
+* Start the map building node 
+
+    ```
+    $ ros2 launch scout_navigation map_builnding.launch.py
+    ```
+
+* With Nav2 goal or manual control from keyboardtele-op node, you can get the current map. Then, The map can be saved with 'Save Map' and 'Serialize Map' buttons on SlamToolbox Plugin in Rviz2. The saved map is located at $HOME folder.
+
+5. [Localization-Launch]
+ 
+* Start the gazebo node for the Scout robot
+
+    ```
+    $ ros2 launch scout_gazebo gazebo_launch.py
+    ```
+
+* [Option1] Start the localization node with AMCL. The default map is from /maps folder. (Default map name is 'palypen_map')
+
+    ```
+    $ ros2 launch scout_navigation amcl_demo.launch.py 
+    ```
+* [Option2] Start the localization node with Slam Toolbox. The default map is from $HOME folder. (Default map name is 'test_map')
+
+    ```
+    $ ros2 launch scout_navigation localization.launch.py 
+    ```
+
 
 
