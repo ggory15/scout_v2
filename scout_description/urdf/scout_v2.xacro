@@ -107,9 +107,9 @@
         <parent link="base_link" />
         <child link="base_laser_mount" />
         </joint>
-        <!-- <xacro:vlp16_mount prefix="" parent_link="base_link" topic="points">
-        <origin xyz="-0.2 0 0.4" rpy="0 0 0" />
-        </xacro:vlp16_mount> -->
+        <xacro:vlp16_mount prefix="base" parent_link="base_link" topic="velodyne_points" gpu="true">
+        <origin xyz="0.4 0 0.4" rpy="0 0 0" />
+        </xacro:vlp16_mount>
     </xacro:if>
 
 </robot>
