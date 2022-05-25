@@ -2,6 +2,17 @@
 
 <robot name="scout_v2" 
     xmlns:xacro="http://ros.org/wiki/xacro">
+    
+    <xacro:macro name="box_inertia" params="m x y z">
+        <inertia
+            ixx="${m*(y*y+z*z)/12}"
+            ixy="0"
+            ixz="0"
+            iyy="${m*(x*x+z*z)/12}"
+            iyz="0"
+            izz="${m*(x*x+z*z)/12}"
+        />
+    </xacro:macro>
 
     <xacro:arg name="robot_namespace" default="/" />
     <xacro:arg name="urdf_extras" default="empty.urdf" />
@@ -51,12 +62,11 @@
 
     <link name="inertial_link">
         <inertial>
-            <mass value="200" />
-            <!-- <mass value="50" /> -->
-            <!-- <origin xyz="-0.00065 -0.085 0.062" />
-            <inertia ixx="0.6022" ixy="-0.02364" ixz="-0.1197" iyy="1.7386" iyz="-0.001544" izz="2.0296" /> -->
-            <origin xyz="0.0 0.0 0.0" />
-            <inertia ixx="2.288641" ixy="0" ixz="0" iyy="5.103976" iyz="0" izz="3.431465" />
+            <mass value="65" />
+            <xacro:box_inertia m="65"
+             x="0.930"
+             y="0.699"
+             z="0.348"/>
         </inertial>
     </link>
 
@@ -107,9 +117,9 @@
         <parent link="base_link" />
         <child link="base_laser_mount" />
         </joint>
-        <xacro:vlp16_mount prefix="base" parent_link="base_link" topic="velodyne_points" gpu="true">
-        <origin xyz="0.4 0 0.4" rpy="0 0 0" />
-        </xacro:vlp16_mount>
+        <!-- <xacro:vlp16_mount prefix="" parent_link="base_link" topic="points">
+        <origin xyz="-0.2 0 0.4" rpy="0 0 0" />
+        </xacro:vlp16_mount> -->
     </xacro:if>
 
 </robot>
